@@ -14,7 +14,7 @@ cat gochamaze.log | sjq -n
 # gochamze.logのJSONとしてはパースできない部分のみをstdoutに出力する
 application started
 
-cat gochamaze.log | sjq -j json.log -n non-json.log
+cat gochamaze.log | sjq --json json.log --non-json non-json.log
 # json.logにJSONとしてパースできる部分のみをstdoutに出力する
 # non-json.logにJSONとしてはパースできない部分のみをstdoutに出力する
 ```

@@ -27,7 +27,7 @@ func main() {
 	flag.StringVar(&nonJSONFile, "non-json", "", "Output non-JSON lines to specified file")
 
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, `sjq - Stream JSON Separator (v1.0.0)
+		fmt.Fprintf(os.Stderr, `sjq - Stream JSON Separator (v%s)
 
 A lightweight tool to separate JSON and non-JSON lines from mixed log streams.
 Zero dependencies, pure Go implementation.
@@ -46,7 +46,7 @@ Examples:
   cat app.log | sjq --json structured.log --non-json plain.log
 
 Options:
-`)
+`, Version)
 		flag.PrintDefaults()
 		fmt.Fprintln(os.Stderr)
 	}
@@ -59,7 +59,7 @@ Options:
 	}
 
 	if showVersion {
-		fmt.Println("sjq version 1.0.0")
+		fmt.Printf("sjq version %s\n", Version)
 		os.Exit(0)
 	}
 

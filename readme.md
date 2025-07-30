@@ -120,6 +120,24 @@ cat production.log | sjq -n | grep ERROR
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+### Release Process
+
+This project uses semantic versioning. To create a new release:
+
+```sh
+# For bug fixes (1.0.0 -> 1.0.1)
+./release.sh patch
+
+# For new features (1.0.0 -> 1.1.0)
+./release.sh minor
+
+# For breaking changes (1.0.0 -> 2.0.0)
+./release.sh major
+
+# Or manually with make
+make release VERSION=1.0.1
+```
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

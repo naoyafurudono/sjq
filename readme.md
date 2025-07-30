@@ -82,6 +82,18 @@ cat app.log | sjq -n > debug.log
 tail -f app.log | sjq --json metrics.json --non-json debug.log
 ```
 
+### Using with tee for simultaneous viewing and filtering
+```sh
+# View all logs while saving JSON logs separately
+tail -f app.log | tee /dev/stderr | sjq > structured.json
+
+# Monitor all logs while extracting non-JSON to a file
+cat app.log | tee /dev/stderr | sjq -n > errors.txt
+
+# Split logs three ways: view all, save JSON, save non-JSON
+tail -f app.log | tee >(sjq > json.log) >(sjq -n > text.log)
+```
+
 ## 🔧 Options
 
 | Option | Description |

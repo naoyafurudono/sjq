@@ -5,6 +5,8 @@
 
 **sjq** (Stream JSON Separator) is a lightweight CLI tool written in Go that separates JSON and non-JSON lines from mixed log streams. Perfect for processing application logs that contain both structured JSON logs and plain text output.
 
+✨ **Zero dependencies** - Built with Go's standard library only!
+
 ## 🎯 Why sjq?
 
 Modern applications often produce mixed output - structured JSON logs alongside plain text messages. **sjq** helps you:
@@ -13,6 +15,7 @@ Modern applications often produce mixed output - structured JSON logs alongside 
 - 📝 **Isolate plain text** for debugging and human reading
 - 🚀 **Process streams in real-time** with minimal memory footprint
 - 🔧 **Integrate easily** into existing log processing pipelines
+- 🎯 **Zero dependencies** - single binary, works everywhere Go runs
 
 ## 📦 Installation
 

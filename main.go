@@ -14,12 +14,54 @@ func main() {
 		nonJSONOnly bool
 		jsonFile    string
 		nonJSONFile string
+		showHelp    bool
+		showVersion bool
 	)
 
+	flag.BoolVar(&showHelp, "h", false, "Show help message")
+	flag.BoolVar(&showHelp, "help", false, "Show help message")
+	flag.BoolVar(&showVersion, "v", false, "Show version")
+	flag.BoolVar(&showVersion, "version", false, "Show version")
 	flag.BoolVar(&nonJSONOnly, "n", false, "Output only non-JSON lines to stdout")
 	flag.StringVar(&jsonFile, "json", "", "Output JSON lines to specified file")
 	flag.StringVar(&nonJSONFile, "non-json", "", "Output non-JSON lines to specified file")
+
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, `sjq - Stream JSON Separator (v1.0.0)
+
+A lightweight tool to separate JSON and non-JSON lines from mixed log streams.
+Zero dependencies, pure Go implementation.
+
+Usage:
+  sjq [OPTIONS]
+
+Examples:
+  # Extract only JSON lines
+  cat app.log | sjq
+  
+  # Extract only non-JSON lines
+  cat app.log | sjq -n
+  
+  # Separate into different files
+  cat app.log | sjq --json structured.log --non-json plain.log
+
+Options:
+`)
+		flag.PrintDefaults()
+		fmt.Fprintln(os.Stderr)
+	}
+
 	flag.Parse()
+
+	if showHelp {
+		flag.Usage()
+		os.Exit(0)
+	}
+
+	if showVersion {
+		fmt.Println("sjq version 1.0.0")
+		os.Exit(0)
+	}
 
 	var jsonWriter io.Writer = os.Stdout
 	var nonJSONWriter io.Writer = io.Discard

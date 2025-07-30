@@ -17,12 +17,9 @@ func main() {
 	)
 
 	flag.BoolVar(&nonJSONOnly, "n", false, "Output only non-JSON lines to stdout")
-	flag.StringVar(&jsonFile, "j", "", "Output JSON lines to specified file")
+	flag.StringVar(&jsonFile, "json", "", "Output JSON lines to specified file")
+	flag.StringVar(&nonJSONFile, "non-json", "", "Output non-JSON lines to specified file")
 	flag.Parse()
-
-	if flag.NArg() > 0 {
-		nonJSONFile = flag.Arg(0)
-	}
 
 	var jsonWriter io.Writer = os.Stdout
 	var nonJSONWriter io.Writer = io.Discard

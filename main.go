@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -91,23 +92,67 @@ Options:
 		nonJSONWriter = f
 	}
 
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if isJSON(line) {
-			fmt.Fprintln(jsonWriter, line)
-		} else {
-			fmt.Fprintln(nonJSONWriter, line)
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error reading stdin: %v\n", err)
-		os.Exit(1)
-	}
+	processInput(os.Stdin, jsonWriter, nonJSONWriter)
 }
 
 func isJSON(line string) bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(line), &js) == nil
+}
+
+func processInput(reader io.Reader, jsonWriter, nonJSONWriter io.Writer) {
+	scanner := bufio.NewScanner(reader)
+	var buffer []string
+	var inJSON bool
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		trimmed := strings.TrimSpace(line)
+
+		// Check if this line could be the start of a JSON object or array
+		if !inJSON && (strings.HasPrefix(trimmed, "{") || strings.HasPrefix(trimmed, "[")) {
+			buffer = append(buffer, line)
+			inJSON = true
+			// Check if it's a complete JSON on one line
+			if isCompleteJSON(strings.Join(buffer, "\n")) {
+				fmt.Fprintln(jsonWriter, strings.Join(buffer, "\n"))
+				buffer = nil
+				inJSON = false
+			}
+		} else if inJSON {
+			buffer = append(buffer, line)
+			// Check if we have a complete JSON
+			if isCompleteJSON(strings.Join(buffer, "\n")) {
+				fmt.Fprintln(jsonWriter, strings.Join(buffer, "\n"))
+				buffer = nil
+				inJSON = false
+			}
+		} else {
+			// Single line, check if it's JSON
+			if isJSON(line) {
+				fmt.Fprintln(jsonWriter, line)
+			} else {
+				fmt.Fprintln(nonJSONWriter, line)
+			}
+		}
+	}
+
+	// Handle any remaining buffer content
+	if len(buffer) > 0 {
+		// Not a complete JSON, treat as non-JSON lines
+		for _, line := range buffer {
+			fmt.Fprintln(nonJSONWriter, line)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading input: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func isCompleteJSON(s string) bool {
+	var js json.RawMessage
+	err := json.Unmarshal([]byte(s), &js)
+	return err == nil
 }
